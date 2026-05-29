@@ -21,8 +21,8 @@
 
 <!-- タブ -->
 <div class="tab-nav">
-  <button class="tab-btn active" onclick="switchTab('form')">✏️ 入力</button>
-  <button class="tab-btn" onclick="switchTab('preview')">🃏 プレビュー</button>
+  <button class="tab-btn active" data-tab="form">✏️ 入力</button>
+  <button class="tab-btn" data-tab="preview">🃏 プレビュー</button>
 </div>
 
 <!-- ===== 入力画面 ===== -->
@@ -32,7 +32,7 @@
 
   <!-- 写真＋名前・エリア -->
   <div class="photo-name-row">
-    <div class="photo-upload" id="photo-upload" onclick="triggerPhoto()">
+    <div class="photo-upload" id="photo-upload">
       <div class="upload-hint">
         <span class="upload-icon">📷</span>
         <span class="upload-text">写真を選択</span>
@@ -49,18 +49,18 @@
       </div>
     </div>
   </div>
-  <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="loadPhoto(event)">
+  <input type="file" id="photo-input" accept="image/*" style="display:none">
 
   <div class="field">
     <label>レーティング</label>
     <div class="rating-row">
       <div class="rating-input-wrap">
         <span class="rating-badge live">LIVE</span>
-        <input type="text" id="f-rating-live" placeholder="---" maxlength="6" inputmode="decimal" oninput="sanitizeRatingInput(this)">
+        <input type="text" id="f-rating-live" placeholder="---" maxlength="6" inputmode="decimal">
       </div>
       <div class="rating-input-wrap">
         <span class="rating-badge phoenix">PHO</span>
-        <input type="text" id="f-rating-phoenix" placeholder="---" maxlength="6" inputmode="decimal" oninput="sanitizeRatingInput(this)">
+        <input type="text" id="f-rating-phoenix" placeholder="---" maxlength="6" inputmode="decimal">
       </div>
     </div>
   </div>
@@ -87,33 +87,33 @@
   <div class="field">
     <label>普段のスタイル</label>
     <div class="toggle-row">
-      <button class="toggle-btn" data-group="style" data-val="solo" onclick="toggleSelect(this)">🤫 1人で黙々</button>
-      <button class="toggle-btn" data-group="style" data-val="group" onclick="toggleSelect(this)">🎉 大人数でワイワイ</button>
+      <button class="toggle-btn" data-group="style" data-val="solo">🤫 1人で黙々</button>
+      <button class="toggle-btn" data-group="style" data-val="group">🎉 大人数でワイワイ</button>
     </div>
   </div>
 
   <div class="field">
     <label>飲酒</label>
     <div class="toggle-row">
-      <button class="toggle-btn" data-group="drink" data-val="yes" onclick="toggleSelect(this)">🍺 飲む</button>
-      <button class="toggle-btn" data-group="drink" data-val="no" onclick="toggleSelect(this)">🚫 飲まない</button>
+      <button class="toggle-btn" data-group="drink" data-val="yes">🍺 飲む</button>
+      <button class="toggle-btn" data-group="drink" data-val="no">🚫 飲まない</button>
     </div>
   </div>
 
   <div class="field">
     <label>喫煙</label>
     <div class="toggle-row">
-      <button class="toggle-btn" data-group="smoke" data-val="yes" onclick="toggleSelect(this)">🚬 吸う</button>
-      <button class="toggle-btn" data-group="smoke" data-val="no" onclick="toggleSelect(this)">🚭 吸わない</button>
+      <button class="toggle-btn" data-group="smoke" data-val="yes">🚬 吸う</button>
+      <button class="toggle-btn" data-group="smoke" data-val="no">🚭 吸わない</button>
     </div>
   </div>
 
   <div class="field">
     <label>ガチ度</label>
     <div class="toggle-row">
-      <button class="toggle-btn" data-group="gachi" data-val="gachi" onclick="toggleSelect(this)">🔥 ガチ</button>
-      <button class="toggle-btn" data-group="gachi" data-val="half" onclick="toggleSelect(this)">⚖️ 半々</button>
-      <button class="toggle-btn" data-group="gachi" data-val="enjoy" onclick="toggleSelect(this)">😄 エンジョイ</button>
+      <button class="toggle-btn" data-group="gachi" data-val="gachi">🔥 ガチ</button>
+      <button class="toggle-btn" data-group="gachi" data-val="half">⚖️ 半々</button>
+      <button class="toggle-btn" data-group="gachi" data-val="enjoy">😄 エンジョイ</button>
     </div>
   </div>
 
@@ -124,7 +124,7 @@
     <textarea id="f-pr" placeholder="---" maxlength="80"></textarea>
   </div>
 
-  <button class="gen-btn" onclick="generateCard()">カードを生成する →</button>
+  <button class="gen-btn" id="generate-btn">カードを生成する →</button>
 </div>
 
 <!-- ===== プレビュー画面 ===== -->
@@ -135,13 +135,15 @@
     <!-- JS で描画 -->
   </div>
 
-  <button class="save-btn" id="save-btn" onclick="saveCard()">
+  <button class="save-btn" id="save-btn">
     <span>💾</span> PNG で保存する
   </button>
 
 </div>
 
 <div class="toast" id="toast"></div>
+<script src="validators.js"></script>
+<script src="card-renderer.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

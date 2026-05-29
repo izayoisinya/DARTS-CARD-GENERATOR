@@ -537,6 +537,7 @@ html, body {
   white-space: pre-wrap;
   word-break: break-all;
   display: -webkit-box;
+  line-clamp: 4;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -586,6 +587,13 @@ html, body {
 .save-btn.loading {
   opacity: 0.6;
   pointer-events: none;
+}
+
+.save-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: var(--border-bright);
+  color: var(--muted);
 }
 
 /* ===== TOAST ===== */
@@ -661,11 +669,11 @@ html, body {
     <div class="rating-row">
       <div class="rating-input-wrap">
         <span class="rating-badge live">LIVE</span>
-        <input type="text" id="f-rating-live" placeholder="---" maxlength="6" inputmode="decimal" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
+        <input type="text" id="f-rating-live" placeholder="---" maxlength="6" inputmode="decimal" oninput="sanitizeRatingInput(this)">
       </div>
       <div class="rating-input-wrap">
         <span class="rating-badge phoenix">PHO</span>
-        <input type="text" id="f-rating-phoenix" placeholder="---" maxlength="6" inputmode="decimal" oninput="this.value=this.value.replace(/[^0-9.]/g,'')">
+        <input type="text" id="f-rating-phoenix" placeholder="---" maxlength="6" inputmode="decimal" oninput="sanitizeRatingInput(this)">
       </div>
     </div>
   </div>
@@ -756,10 +764,15 @@ const state = {
   drink: null,
   smoke: null,
   gachi: null,
+  generated: false,
 };
 
 // ===== TAB =====
 function switchTab(tab) {
+  if (tab === 'preview' && !state.generated) {
+    showToast('先にカードを生成してください');
+    return;
+  }
   document.querySelectorAll('.tab-btn').forEach((b,i) => {
     b.classList.toggle('active', (i===0 && tab==='form') || (i===1 && tab==='preview'));
   });
@@ -775,6 +788,19 @@ function triggerPhoto() {
 function loadPhoto(e) {
   const file = e.target.files[0];
   if (!file) return;
+
+  const maxPhotoSize = 5 * 1024 * 1024;
+  if (!file.type || !file.type.startsWith('image/')) {
+    showToast('画像ファイルを選択してください');
+    e.target.value = '';
+    return;
+  }
+  if (file.size > maxPhotoSize) {
+    showToast('画像サイズは5MB以下にしてください');
+    e.target.value = '';
+    return;
+  }
+
   const reader = new FileReader();
   reader.onload = ev => {
     state.photo = ev.target.result;
@@ -801,6 +827,21 @@ function syncPhotoSize() {
 window.addEventListener('load', syncPhotoSize);
 window.addEventListener('resize', syncPhotoSize);
 
+function sanitizeRatingInput(input) {
+  let value = input.value.replace(/[^0-9.]/g, '');
+  const firstDot = value.indexOf('.');
+  if (firstDot !== -1) {
+    value = value.slice(0, firstDot + 1) + value.slice(firstDot + 1).replace(/\./g, '');
+  }
+  if (value.startsWith('.')) value = `0${value}`;
+  input.value = value.slice(0, 6);
+}
+
+function updateSaveButtonState() {
+  const btn = document.getElementById('save-btn');
+  btn.disabled = !state.generated;
+}
+
 // ===== TOGGLE =====
 function toggleSelect(btn) {
   const group = btn.dataset.group;
@@ -814,10 +855,10 @@ function generateCard() {
   const name       = document.getElementById('f-name').value.trim() || 'NAME';
   const ratingLive = document.getElementById('f-rating-live').value.trim();
   const ratingPho  = document.getElementById('f-rating-phoenix').value.trim();
-  const area       = document.getElementById('f-area').value.trim() || '—';
-  const barrel     = document.getElementById('f-barrel').value.trim() || '—';
-  const flight     = document.getElementById('f-flight').value.trim() || '—';
-  const tip        = document.getElementById('f-tip').value.trim() || '—';
+  const area       = document.getElementById('f-area').value.trim();
+  const barrel     = document.getElementById('f-barrel').value.trim();
+  const flight     = document.getElementById('f-flight').value.trim();
+  const tip        = document.getElementById('f-tip').value.trim();
   const pr         = document.getElementById('f-pr').value.trim();
 
   const ratingBadges = (() => {
@@ -832,15 +873,6 @@ function generateCard() {
   const drinkLabel = state.drink === 'yes' ? ['飲む','飲まない'] : state.drink === 'no' ? ['飲まない','飲む'] : [null, null];
   const smokeLabel = state.smoke === 'yes' ? ['吸う','吸わない'] : state.smoke === 'no' ? ['吸わない','吸う'] : [null, null];
   const gachiLabel = state.gachi === 'gachi' ? '🔥 ガチ' : state.gachi === 'half' ? '⚖️ 半々' : state.gachi === 'enjoy' ? '😄 エンジョイ' : null;
-
-  function choiceHTML(selected, other) {
-    if (!selected) return `<span class="choice-item" style="color:var(--border-bright)">未選択</span>`;
-    return `
-      <span class="choice-item selected">${selected}</span>
-      <span class="choice-sep">・</span>
-      <span class="choice-item">${other}</span>
-    `;
-  }
 
   const photoHTML = state.photo
     ? `<img src="${state.photo}" alt="photo">`
@@ -927,6 +959,8 @@ function generateCard() {
     </div>
   `;
 
+  state.generated = true;
+  updateSaveButtonState();
   switchTab('preview');
 }
 
@@ -936,6 +970,11 @@ function escHtml(str) {
 
 // ===== SAVE =====
 async function saveCard() {
+  if (!state.generated || !document.getElementById('card-output').children.length) {
+    showToast('先にカードを生成してください');
+    return;
+  }
+
   const btn = document.getElementById('save-btn');
   btn.classList.add('loading');
   btn.innerHTML = '<span>⏳</span> 生成中…';
@@ -964,6 +1003,8 @@ async function saveCard() {
   btn.classList.remove('loading');
   btn.innerHTML = '<span>💾</span> PNG で保存する';
 }
+
+updateSaveButtonState();
 
 // ===== TOAST =====
 function showToast(msg) {

@@ -8,6 +8,11 @@ const state = {
   generated: false,
 };
 
+const ratingConfigs = {
+  'f-rating-live': { max: 18, label: 'ダーツライブ' },
+  'f-rating-phoenix': { max: 30, label: 'フェニックス' },
+};
+
 function initializeEventListeners() {
   document.querySelectorAll('.tab-btn[data-tab]').forEach(btn => {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
@@ -19,7 +24,16 @@ function initializeEventListeners() {
   photoInput.addEventListener('change', loadPhoto);
 
   document.querySelectorAll('#f-rating-live, #f-rating-phoenix').forEach(input => {
+    const config = ratingConfigs[input.id];
+
     input.addEventListener('input', () => sanitizeRatingInput(input));
+    input.addEventListener('blur', () => {
+      const result = validateAndFormatRatingInput(input, config.max, config.label);
+      if (!result.isValid) {
+        showToast(result.error);
+        input.focus();
+      }
+    });
   });
 
   document.querySelectorAll('.toggle-btn[data-group]').forEach(btn => {
@@ -101,10 +115,35 @@ function toggleSelect(btn) {
 
 // ===== GENERATE =====
 function generateCard() {
+  const liveInput = document.getElementById('f-rating-live');
+  const phoenixInput = document.getElementById('f-rating-phoenix');
+
+  const liveValidation = validateAndFormatRatingInput(
+    liveInput,
+    ratingConfigs['f-rating-live'].max,
+    ratingConfigs['f-rating-live'].label
+  );
+  if (!liveValidation.isValid) {
+    showToast(liveValidation.error);
+    liveInput.focus();
+    return;
+  }
+
+  const phoenixValidation = validateAndFormatRatingInput(
+    phoenixInput,
+    ratingConfigs['f-rating-phoenix'].max,
+    ratingConfigs['f-rating-phoenix'].label
+  );
+  if (!phoenixValidation.isValid) {
+    showToast(phoenixValidation.error);
+    phoenixInput.focus();
+    return;
+  }
+
   const formData = {
-    name: document.getElementById('f-name').value.trim() || 'NAME',
-    ratingLive: document.getElementById('f-rating-live').value.trim(),
-    ratingPho: document.getElementById('f-rating-phoenix').value.trim(),
+    name: document.getElementById('f-name').value.trim(),
+    ratingLive: liveInput.value.trim(),
+    ratingPho: phoenixInput.value.trim(),
     area: document.getElementById('f-area').value.trim(),
     barrel: document.getElementById('f-barrel').value.trim(),
     flight: document.getElementById('f-flight').value.trim(),

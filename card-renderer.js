@@ -22,11 +22,13 @@ function buildCardHtml(formData, state) {
     if (ratingPho) {
       badges.push(`<span class="card-rating-badge" style="border-color:rgba(232,112,75,0.4);background:rgba(232,112,75,0.1)"><span class="card-rating-label" style="color:#e8704b">PHO</span><span class="card-rating-val" style="color:#e8704b">${escHtml(ratingPho)}</span></span>`);
     }
-    if (!badges.length) {
-      badges.push('<span class="card-rating-badge"><span class="card-rating-label">RT</span><span class="card-rating-val">—</span></span>');
-    }
     return badges.join('');
   })();
+
+  const nameHtml = name ? `<div class="card-name">${escHtml(name)}</div>` : '';
+  const ratingsHtml = ratingBadges
+    ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">${ratingBadges}</div>`
+    : '';
 
   const styleLabel = state.style === 'solo' ? '1人で黙々' : state.style === 'group' ? '大人数でワイワイ' : null;
   const drinkLabel = state.drink === 'yes' ? '飲む' : state.drink === 'no' ? '飲まない' : null;
@@ -89,10 +91,8 @@ function buildCardHtml(formData, state) {
     <div class="card-header">
       <div class="card-photo">${photoHTML}</div>
       <div class="card-name-block">
-        <div class="card-name">${escHtml(name)}</div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
-          ${ratingBadges}
-        </div>
+        ${nameHtml}
+        ${ratingsHtml}
       </div>
     </div>
     <div class="card-body">

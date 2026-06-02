@@ -8,6 +8,8 @@ function buildCardHtml(formData, state) {
     ratingLive,
     ratingPho,
     area,
+    home,
+    gender,
     barrel,
     flight,
     tip,
@@ -25,8 +27,12 @@ function buildCardHtml(formData, state) {
     return badges.join('');
   })();
 
-  const nameHtml = name ? `<div class="card-name">${escHtml(name)}</div>` : '';
-  const ratingsHtml = ratingBadges
+  const genderMark = gender === 'male' ? '♂' : gender === 'female' ? '♀' : '';
+  const genderColor = gender === 'male' ? '#4d90fe' : gender === 'female' ? '#e8547a' : '';
+  const nameHtml = name
+    ? `<div class="card-name-line">${genderMark ? `<span class="card-gender-mark" style="color:${genderColor}">${genderMark}</span>` : ''}<div class="card-name">${escHtml(name)}</div></div>`
+    : '';
+  const metaHtml = ratingBadges
     ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">${ratingBadges}</div>`
     : '';
 
@@ -61,7 +67,8 @@ function buildCardHtml(formData, state) {
     </div>`;
   }
 
-  const areaRow = area ? wideCell('エリア / ホーム', escHtml(area), 'gold') : '';
+  const areaRow = area ? wideCell('エリア', escHtml(area), 'gold') : '';
+  const homeRow = home ? wideCell('ホーム', escHtml(home), 'gold') : '';
 
   let settingRows = '';
   if (barrel) settingRows += wideCell('バレル', escHtml(barrel));
@@ -92,11 +99,12 @@ function buildCardHtml(formData, state) {
       <div class="card-photo">${photoHTML}</div>
       <div class="card-name-block">
         ${nameHtml}
-        ${ratingsHtml}
+        ${metaHtml}
       </div>
     </div>
     <div class="card-body">
       ${areaRow}
+      ${homeRow}
       ${settingRows}
       ${gridRows}
       ${prSection}

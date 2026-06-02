@@ -1,6 +1,7 @@
 // ===== STATE =====
 const state = {
   photo: null,    // base64 or null
+  gender: null,
   style: null,
   drink: null,
   smoke: null,
@@ -145,6 +146,8 @@ function generateCard() {
     ratingLive: liveInput.value.trim(),
     ratingPho: phoenixInput.value.trim(),
     area: document.getElementById('f-area').value.trim(),
+    home: document.getElementById('f-home').value.trim(),
+    gender: state.gender,
     barrel: document.getElementById('f-barrel').value.trim(),
     flight: document.getElementById('f-flight').value.trim(),
     tip: document.getElementById('f-tip').value.trim(),

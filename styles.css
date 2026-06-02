@@ -182,6 +182,22 @@ html, body {
   color: var(--teal);
 }
 
+.toggle-btn[data-group="gender"] {
+  min-width: 72px;
+}
+
+.toggle-btn[data-group="gender"][data-val="male"].active {
+  background: rgba(77, 144, 254, 0.14);
+  border-color: #4d90fe;
+  color: #4d90fe;
+}
+
+.toggle-btn[data-group="gender"][data-val="female"].active {
+  background: rgba(232, 84, 122, 0.14);
+  border-color: #e8547a;
+  color: #e8547a;
+}
+
 /* 2列フィールド */
 .field-row-2 {
   display: grid;
@@ -399,6 +415,19 @@ html, body {
 }
 
 .card-name-block { flex: 1; min-width: 0; }
+
+.card-name-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card-gender-mark {
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+}
 
 .card-name {
   font-family: var(--font-display);

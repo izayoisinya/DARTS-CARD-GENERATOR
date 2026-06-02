@@ -44,12 +44,25 @@
         <input type="text" id="f-name" placeholder="---" maxlength="20">
       </div>
       <div class="field">
-        <label>エリア / ホーム</label>
-        <input type="text" id="f-area" placeholder="---" maxlength="20">
+        <label>性別</label>
+        <div class="toggle-row">
+          <button class="toggle-btn" data-group="gender" data-val="male">♂ 男性</button>
+          <button class="toggle-btn" data-group="gender" data-val="female">♀ 女性</button>
+        </div>
       </div>
     </div>
   </div>
   <input type="file" id="photo-input" accept="image/*" style="display:none">
+
+  <div class="field">
+    <label>エリア</label>
+    <input type="text" id="f-area" placeholder="---" maxlength="20">
+  </div>
+
+  <div class="field">
+    <label>ホーム</label>
+    <input type="text" id="f-home" placeholder="---" maxlength="20">
+  </div>
 
   <div class="field">
     <label>レーティング</label>

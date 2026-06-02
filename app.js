@@ -150,6 +150,7 @@ function generateCard() {
     gender: state.gender,
     barrel: document.getElementById('f-barrel').value.trim(),
     flight: document.getElementById('f-flight').value.trim(),
+    shaft: document.getElementById('f-shaft').value.trim(),
     tip: document.getElementById('f-tip').value.trim(),
     pr: document.getElementById('f-pr').value.trim(),
   };

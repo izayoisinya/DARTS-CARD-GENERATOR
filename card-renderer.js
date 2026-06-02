@@ -12,6 +12,7 @@ function buildCardHtml(formData, state) {
     gender,
     barrel,
     flight,
+    shaft,
     tip,
     pr,
   } = formData;
@@ -72,7 +73,8 @@ function buildCardHtml(formData, state) {
 
   let settingRows = '';
   if (barrel) settingRows += wideCell('バレル', escHtml(barrel));
-  if (flight) settingRows += wideCell('フライト / シャフト', escHtml(flight));
+  if (flight) settingRows += wideCell('フライト', escHtml(flight));
+  if (shaft) settingRows += wideCell('シャフト', escHtml(shaft));
   if (tip) settingRows += wideCell('チップ', escHtml(tip));
 
   const choices = [];

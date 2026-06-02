@@ -14,6 +14,11 @@ function buildCardHtml(formData, state) {
     flight,
     shaft,
     tip,
+    favoritePro,
+    goodNumber,
+    favoriteGame,
+    goal,
+    sns,
     pr,
   } = formData;
 
@@ -77,6 +82,38 @@ function buildCardHtml(formData, state) {
   if (shaft) settingRows += wideCell('シャフト', escHtml(shaft));
   if (tip) settingRows += wideCell('チップ', escHtml(tip));
 
+  let otherRows = '';
+
+  if (favoritePro) {
+    otherRows += wideCell('好きなプロ', escHtml(favoritePro));
+  }
+
+  if (goal) {
+    otherRows += wideCell('目標', escHtml(goal));
+  }
+
+  const favoriteGameCell = favoriteGame ? choiceCell('好きなゲーム', escHtml(favoriteGame)) : null;
+  const goodNumberCell = goodNumber ? choiceCell('得意ナンバー', escHtml(goodNumber)) : null;
+
+  if (favoriteGameCell && goodNumberCell) {
+    otherRows += `<div class="card-grid-2">${favoriteGameCell}${goodNumberCell}</div>`;
+  } else if (favoriteGameCell) {
+    otherRows += favoriteGameCell;
+  } else if (goodNumberCell) {
+    otherRows += goodNumberCell;
+  }
+
+  let snsRows = '';
+  if (Array.isArray(sns)) {
+    sns.forEach(item => {
+      const label = item.name ? escHtml(item.name) : 'SNS';
+      const value = item.account ? escHtml(item.account) : '';
+      if (value) {
+        snsRows += wideCell(label, value);
+      }
+    });
+  }
+
   const choices = [];
   const styleCell = choiceCell('普段は', styleLabel);
   if (styleCell) choices.push(styleCell);
@@ -109,6 +146,8 @@ function buildCardHtml(formData, state) {
       ${homeRow}
       ${settingRows}
       ${gridRows}
+      ${otherRows}
+      ${snsRows}
       ${prSection}
     </div>
     <div class="card-footer">

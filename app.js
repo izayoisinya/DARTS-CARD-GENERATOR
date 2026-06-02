@@ -41,8 +41,75 @@ function initializeEventListeners() {
     btn.addEventListener('click', () => toggleSelect(btn));
   });
 
+  document.querySelectorAll('.sns-account').forEach(bindSnsAccountInput);
+
+  document.getElementById('add-sns-btn').addEventListener('click', addSnsInputRow);
+
   document.getElementById('generate-btn').addEventListener('click', generateCard);
   document.getElementById('save-btn').addEventListener('click', saveCard);
+}
+
+function addSnsInputRow() {
+  const snsList = document.getElementById('sns-list');
+  const row = document.createElement('div');
+  row.className = 'sns-row';
+  row.innerHTML = `
+    <input type="text" class="sns-name-input" placeholder="SNS名" maxlength="16">
+    <input type="text" class="sns-account" placeholder="@account" maxlength="30">
+    <button type="button" class="sns-remove-btn" aria-label="SNS行を削除">×</button>
+  `;
+
+  bindSnsAccountInput(row.querySelector('.sns-account'));
+  row.querySelector('.sns-remove-btn').addEventListener('click', () => row.remove());
+  snsList.appendChild(row);
+}
+
+function normalizeSnsAccountValue(rawValue) {
+  const compact = rawValue.replace(/\s/g, '');
+  if (!compact) return '';
+
+  const withoutAt = compact.replace(/^@+/, '').replace(/@/g, '');
+  if (!withoutAt) return '';
+
+  return `@${withoutAt}`;
+}
+
+function bindSnsAccountInput(input) {
+  if (!input) return;
+
+  input.addEventListener('focus', () => {
+    if (!input.value.trim()) {
+      input.value = '@';
+    }
+  });
+
+  input.addEventListener('input', () => {
+    const normalized = normalizeSnsAccountValue(input.value);
+    input.value = normalized || '@';
+  });
+
+  input.addEventListener('blur', () => {
+    if (input.value.trim() === '@') {
+      input.value = '';
+    }
+  });
+}
+
+function collectSnsData() {
+  const rows = Array.from(document.querySelectorAll('#sns-list .sns-row'));
+  return rows
+    .map(row => {
+      const accountInput = row.querySelector('.sns-account');
+      const account = accountInput ? normalizeSnsAccountValue(accountInput.value.trim()) : '';
+      if (!account) return null;
+
+      const fixedName = accountInput ? accountInput.dataset.snsName : '';
+      const customNameInput = row.querySelector('.sns-name-input');
+      const snsName = fixedName || (customNameInput ? customNameInput.value.trim() : '') || 'SNS';
+
+      return { name: snsName, account };
+    })
+    .filter(Boolean);
 }
 
 // ===== TAB =====
@@ -152,6 +219,11 @@ function generateCard() {
     flight: document.getElementById('f-flight').value.trim(),
     shaft: document.getElementById('f-shaft').value.trim(),
     tip: document.getElementById('f-tip').value.trim(),
+    favoritePro: document.getElementById('f-favorite-pro').value.trim(),
+    goodNumber: document.getElementById('f-good-number').value.trim(),
+    favoriteGame: document.getElementById('f-favorite-game').value.trim(),
+    goal: document.getElementById('f-goal').value.trim(),
+    sns: collectSnsData(),
     pr: document.getElementById('f-pr').value.trim(),
   };
 

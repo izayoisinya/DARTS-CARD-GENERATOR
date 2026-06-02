@@ -254,6 +254,77 @@ html, body {
   border: 1px solid rgba(232,100,75,0.3);
 }
 
+.sns-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sns-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+}
+
+.sns-name-fixed {
+  min-width: 76px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--teal);
+  letter-spacing: 0.04em;
+}
+
+.sns-name-input,
+.sns-account {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+
+.sns-name-input {
+  width: 92px;
+}
+
+.sns-account {
+  flex: 1;
+  min-width: 0;
+}
+
+.sns-remove-btn {
+  border: 1px solid var(--border-bright);
+  background: transparent;
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.sns-add-btn {
+  margin-top: 10px;
+  width: 100%;
+  border: 1px dashed var(--border-bright);
+  background: transparent;
+  color: var(--muted);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.sns-add-btn:active {
+  background: var(--surface2);
+}
+
 /* 写真＋名前・エリア 横並びラッパー */
 .photo-name-row {
   display: flex;

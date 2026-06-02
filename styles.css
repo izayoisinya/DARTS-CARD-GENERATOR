@@ -430,21 +430,38 @@ html, body {
   padding: 16px 20px 40px;
 }
 
+#card-preview-stage {
+  width: 100%;
+  overflow: hidden;
+  --preview-scale: 1;
+  height: calc(720px * var(--preview-scale));
+}
+
+#card-preview-scale {
+  width: 1280px;
+  height: 720px;
+  transform-origin: top left;
+  transform: scale(var(--preview-scale));
+}
+
 /* ===== カードデザイン ===== */
 #card-output {
-  width: 100%;
+  width: 1280px;
+  height: 720px;
   background: var(--surface);
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid var(--border-bright);
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 /* カード上部ヘッダー */
 .card-header {
   background: linear-gradient(135deg, #0e1018 0%, #16192400 100%);
   border-bottom: 1px solid var(--border);
-  padding: 18px 18px 14px;
+  padding: 14px 14px 10px;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -463,8 +480,8 @@ html, body {
 }
 
 .card-photo {
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: var(--surface2);
   border: 2px solid var(--gold);
@@ -499,7 +516,7 @@ html, body {
 
 .card-name {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 19px;
   color: var(--gold);
   line-height: 1.1;
   word-break: break-all;
@@ -525,16 +542,25 @@ html, body {
 
 .card-rating-val {
   font-family: var(--font-display);
-  font-size: 15px;
+  font-size: 13px;
   color: var(--gold);
 }
 
 /* カードボディ */
 .card-body {
-  padding: 14px 18px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-content: start;
+  flex: 1;
+  min-height: 0;
+}
+
+.card-body > .card-grid-2,
+.card-body > .card-pr,
+.card-body > .card-qr-cell {
+  grid-column: 1 / -1;
 }
 
 /* 2列グリッド */
@@ -548,24 +574,30 @@ html, body {
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 8px 10px;
+  min-height: 0;
 }
 
 .card-cell .c-label {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 8px;
   color: var(--muted);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .card-cell .c-val {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--teal);
   word-break: break-all;
-  line-height: 1.3;
+  line-height: 1.25;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .card-cell .c-val.gold { color: var(--gold); }
@@ -576,8 +608,8 @@ html, body {
 
 .card-qr-box {
   margin: 2px auto 0;
-  width: 96px;
-  height: 96px;
+  width: 80px;
+  height: 80px;
   background: #fff;
   border-radius: 8px;
   padding: 6px;
@@ -633,7 +665,7 @@ html, body {
   border: 1px solid var(--border);
   border-left: 3px solid var(--gold);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 8px 10px;
 }
 
 .card-pr .c-label {
@@ -646,15 +678,15 @@ html, body {
 }
 
 .card-pr .c-val {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--gold);
-  line-height: 1.7;
+  line-height: 1.45;
   white-space: pre-wrap;
   word-break: break-all;
   display: -webkit-box;
-  line-clamp: 4;
-  -webkit-line-clamp: 4;
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -662,7 +694,7 @@ html, body {
 /* フッター */
 .card-footer {
   border-top: 1px solid var(--border);
-  padding: 8px 18px;
+  padding: 6px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -670,7 +702,7 @@ html, body {
 
 .card-footer-tag {
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 8px;
   color: var(--border-bright);
   letter-spacing: 0.12em;
 }

@@ -53,6 +53,18 @@ function initializeEventListeners() {
   document.getElementById('save-btn').addEventListener('click', saveCard);
 
   refreshQrTargetOptions();
+  syncCardPreviewScale();
+}
+
+function syncCardPreviewScale() {
+  const stage = document.getElementById('card-preview-stage');
+  if (!stage) return;
+
+  const designWidth = 1280;
+  const stageWidth = stage.clientWidth || designWidth;
+  const scale = Math.min(1, stageWidth / designWidth);
+
+  stage.style.setProperty('--preview-scale', String(scale));
 }
 
 function shouldForceAtBySnsName(snsName) {
@@ -237,6 +249,10 @@ function switchTab(tab) {
   });
   document.getElementById('form-screen').classList.toggle('active', tab==='form');
   document.getElementById('preview-screen').classList.toggle('active', tab==='preview');
+
+  if (tab === 'preview') {
+    syncCardPreviewScale();
+  }
 }
 
 // ===== PHOTO =====
@@ -281,6 +297,8 @@ function syncPhotoSize() {
 // ページ読み込み後・リサイズ時にも同期
 window.addEventListener('load', syncPhotoSize);
 window.addEventListener('resize', syncPhotoSize);
+window.addEventListener('load', syncCardPreviewScale);
+window.addEventListener('resize', syncCardPreviewScale);
 
 function updateSaveButtonState() {
   const btn = document.getElementById('save-btn');
@@ -347,6 +365,7 @@ function generateCard() {
 
   document.getElementById('card-output').innerHTML = buildCardHtml(formData, state);
   renderQrCode(formData.qrTarget);
+  syncCardPreviewScale();
 
   state.generated = true;
   updateSaveButtonState();
@@ -366,9 +385,14 @@ async function saveCard() {
 
   try {
     const el = document.getElementById('card-output');
+    const sourceWidth = el.offsetWidth || 1;
+    const sourceHeight = el.offsetHeight || 1;
+
     const canvas = await html2canvas(el, {
       backgroundColor: '#12141a',
-      scale: 3,
+      scale: 2,
+      width: sourceWidth,
+      height: sourceHeight,
       useCORS: true,
       allowTaint: true,
       logging: false,

@@ -37,79 +37,193 @@ function initializeEventListeners() {
     });
   });
 
+  const experienceInput = document.getElementById('f-experience');
+  experienceInput.addEventListener('input', () => {
+    experienceInput.value = experienceInput.value.replace(/[^0-9]/g, '');
+  });
+
   document.querySelectorAll('.toggle-btn[data-group]').forEach(btn => {
     btn.addEventListener('click', () => toggleSelect(btn));
   });
 
   document.querySelectorAll('.sns-account').forEach(bindSnsAccountInput);
-
-  document.getElementById('add-sns-btn').addEventListener('click', addSnsInputRow);
+  document.getElementById('f-qr-target').addEventListener('change', refreshQrTargetOptions);
 
   document.getElementById('generate-btn').addEventListener('click', generateCard);
   document.getElementById('save-btn').addEventListener('click', saveCard);
+
+  refreshQrTargetOptions();
 }
 
-function addSnsInputRow() {
-  const snsList = document.getElementById('sns-list');
-  const row = document.createElement('div');
-  row.className = 'sns-row';
-  row.innerHTML = `
-    <input type="text" class="sns-name-input" placeholder="SNS名" maxlength="16">
-    <input type="text" class="sns-account" placeholder="@account" maxlength="30">
-    <button type="button" class="sns-remove-btn" aria-label="SNS行を削除">×</button>
-  `;
-
-  bindSnsAccountInput(row.querySelector('.sns-account'));
-  row.querySelector('.sns-remove-btn').addEventListener('click', () => row.remove());
-  snsList.appendChild(row);
+function shouldForceAtBySnsName(snsName) {
+  const name = (snsName || '').toLowerCase();
+  return (
+    name === 'x' ||
+    name.includes('twitter') ||
+    name.includes('instagram') ||
+    name.includes('insta') ||
+    name.includes('tiktok') ||
+    name.includes('tik tok') ||
+    name.includes('youtube') ||
+    name === 'yt' ||
+    name.includes('facebook') ||
+    name === 'fb'
+  );
 }
 
-function normalizeSnsAccountValue(rawValue) {
+function normalizeSnsAccountValue(rawValue, { forceAt = false } = {}) {
   const compact = rawValue.replace(/\s/g, '');
   if (!compact) return '';
+
+  if (/^https?:\/\//i.test(compact)) {
+    return compact;
+  }
 
   const withoutAt = compact.replace(/^@+/, '').replace(/@/g, '');
   if (!withoutAt) return '';
 
-  return `@${withoutAt}`;
+  if (forceAt) {
+    return `@${withoutAt}`;
+  }
+
+  return compact.startsWith('@') ? `@${withoutAt}` : withoutAt;
 }
 
 function bindSnsAccountInput(input) {
   if (!input) return;
 
+  const forceAt = shouldForceAtBySnsName(input.dataset.snsName);
+
   input.addEventListener('focus', () => {
-    if (!input.value.trim()) {
+    if (forceAt && !input.value.trim()) {
       input.value = '@';
     }
   });
 
   input.addEventListener('input', () => {
-    const normalized = normalizeSnsAccountValue(input.value);
-    input.value = normalized || '@';
+    const normalized = normalizeSnsAccountValue(input.value, { forceAt });
+    if (forceAt) {
+      input.value = normalized || '@';
+    } else {
+      input.value = normalized;
+    }
+    refreshQrTargetOptions();
   });
 
   input.addEventListener('blur', () => {
-    if (input.value.trim() === '@') {
+    if (forceAt && input.value.trim() === '@') {
       input.value = '';
     }
+    refreshQrTargetOptions();
   });
 }
 
-function collectSnsData() {
+function collectSnsDataFromDom() {
   const rows = Array.from(document.querySelectorAll('#sns-list .sns-row'));
   return rows
     .map(row => {
       const accountInput = row.querySelector('.sns-account');
-      const account = accountInput ? normalizeSnsAccountValue(accountInput.value.trim()) : '';
+      const forceAt = shouldForceAtBySnsName(accountInput ? accountInput.dataset.snsName : '');
+      const account = accountInput
+        ? normalizeSnsAccountValue(accountInput.value.trim(), { forceAt })
+        : '';
       if (!account) return null;
 
       const fixedName = accountInput ? accountInput.dataset.snsName : '';
-      const customNameInput = row.querySelector('.sns-name-input');
-      const snsName = fixedName || (customNameInput ? customNameInput.value.trim() : '') || 'SNS';
+      const snsName = fixedName || 'SNS';
 
-      return { name: snsName, account };
+      return { id: row.dataset.snsId || '', name: snsName, account };
     })
     .filter(Boolean);
+}
+
+function refreshQrTargetOptions() {
+  const select = document.getElementById('f-qr-target');
+  if (!select) return;
+
+  const prevValue = select.value;
+  const snsData = collectSnsDataFromDom();
+
+  select.innerHTML = '<option value="">選択しない</option>';
+  snsData.forEach(item => {
+    const option = document.createElement('option');
+    option.value = item.id;
+    option.textContent = `${item.name} (${item.account})`;
+    select.appendChild(option);
+  });
+
+  if (snsData.some(item => item.id === prevValue)) {
+    select.value = prevValue;
+  }
+}
+
+function collectSnsData() {
+  return collectSnsDataFromDom().map(({ name, account, id }) => ({ name, account, id }));
+}
+
+function buildSnsProfileUrl(target) {
+  const account = (target.account || '').trim();
+  if (!account) return '';
+
+  if (/^https?:\/\//i.test(account)) {
+    return account;
+  }
+
+  const accountId = account.replace(/^@+/, '');
+  if (!accountId) return '';
+
+  const snsName = (target.name || '').trim().toLowerCase();
+
+  if (snsName === 'x' || snsName.includes('twitter')) {
+    return `https://x.com/${encodeURIComponent(accountId)}`;
+  }
+
+  if (snsName.includes('instagram') || snsName.includes('insta')) {
+    return `https://www.instagram.com/${encodeURIComponent(accountId)}/`;
+  }
+
+  if (snsName.includes('tiktok') || snsName.includes('tik tok')) {
+    return `https://www.tiktok.com/@${encodeURIComponent(accountId)}`;
+  }
+
+  if (snsName.includes('youtube') || snsName === 'yt') {
+    return `https://www.youtube.com/@${encodeURIComponent(accountId)}`;
+  }
+
+  if (snsName.includes('facebook') || snsName === 'fb') {
+    return `https://www.facebook.com/${encodeURIComponent(accountId)}`;
+  }
+
+  return account;
+}
+
+function getSelectedQrTarget(snsItems) {
+  const selectedId = document.getElementById('f-qr-target').value;
+  if (!selectedId) return null;
+  const target = snsItems.find(item => item.id === selectedId);
+  if (!target) return null;
+
+  return {
+    ...target,
+    qrUrl: buildSnsProfileUrl(target),
+  };
+}
+
+function renderQrCode(target) {
+  const box = document.getElementById('card-qr-box');
+  if (!box || !target) return;
+
+  box.innerHTML = '';
+  const qrText = target.qrUrl || target.account;
+
+  new QRCode(box, {
+    text: qrText,
+    width: 84,
+    height: 84,
+    colorDark: '#111111',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M,
+  });
 }
 
 // ===== TAB =====
@@ -212,6 +326,7 @@ function generateCard() {
     name: document.getElementById('f-name').value.trim(),
     ratingLive: liveInput.value.trim(),
     ratingPho: phoenixInput.value.trim(),
+    experience: document.getElementById('f-experience').value.trim(),
     area: document.getElementById('f-area').value.trim(),
     home: document.getElementById('f-home').value.trim(),
     gender: state.gender,
@@ -224,10 +339,14 @@ function generateCard() {
     favoriteGame: document.getElementById('f-favorite-game').value.trim(),
     goal: document.getElementById('f-goal').value.trim(),
     sns: collectSnsData(),
+    qrTarget: null,
     pr: document.getElementById('f-pr').value.trim(),
   };
 
+  formData.qrTarget = getSelectedQrTarget(formData.sns);
+
   document.getElementById('card-output').innerHTML = buildCardHtml(formData, state);
+  renderQrCode(formData.qrTarget);
 
   state.generated = true;
   updateSaveButtonState();

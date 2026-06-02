@@ -278,7 +278,6 @@ html, body {
   letter-spacing: 0.04em;
 }
 
-.sns-name-input,
 .sns-account {
   background: transparent;
   border: none;
@@ -288,41 +287,39 @@ html, body {
   font-size: 14px;
 }
 
-.sns-name-input {
-  width: 92px;
-}
-
 .sns-account {
   flex: 1;
   min-width: 0;
 }
 
-.sns-remove-btn {
-  border: 1px solid var(--border-bright);
-  background: transparent;
-  color: var(--muted);
-  border-radius: 6px;
-  padding: 2px 7px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.sns-add-btn {
+.sns-qr-picker {
   margin-top: 10px;
-  width: 100%;
-  border: 1px dashed var(--border-bright);
-  background: transparent;
-  color: var(--muted);
-  border-radius: var(--radius-sm);
-  padding: 10px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  cursor: pointer;
 }
 
-.sns-add-btn:active {
+.sns-qr-picker label {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.14em;
+  font-family: var(--font-mono);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.sns-qr-select {
+  width: 100%;
   background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 10px 12px;
+  outline: none;
+}
+
+.sns-qr-select:focus {
+  border-color: var(--gold);
 }
 
 /* 写真＋名前・エリア 横並びラッパー */
@@ -572,6 +569,34 @@ html, body {
 }
 
 .card-cell .c-val.gold { color: var(--gold); }
+
+.card-qr-cell {
+  text-align: center;
+}
+
+.card-qr-box {
+  margin: 2px auto 0;
+  width: 96px;
+  height: 96px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px;
+}
+
+.card-qr-box canvas,
+.card-qr-box img {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+.card-qr-note {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.3;
+  word-break: break-all;
+}
 
 /* チョイス表示 */
 .choice-row {

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>🎯 ダーツ自己紹介カード</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Dots&family=Noto+Sans+JP:wght@400;500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -76,6 +77,11 @@
         <input type="text" id="f-rating-phoenix" placeholder="00.00" maxlength="5" inputmode="decimal">
       </div>
     </div>
+  </div>
+
+  <div class="field">
+    <label>ダーツ歴</label>
+    <input type="text" id="f-experience" placeholder="例: 3" maxlength="3" inputmode="numeric">
   </div>
 
   <div class="section-label">セッティング</div>
@@ -162,16 +168,38 @@
   <div class="field">
     <label>SNSアカウント</label>
     <div id="sns-list" class="sns-list">
-      <div class="sns-row" data-fixed="true">
+      <div class="sns-row" data-fixed="true" data-sns-id="sns-x">
         <span class="sns-name-fixed">X</span>
-        <input type="text" class="sns-account" data-sns-name="X" placeholder="@username" maxlength="30">
+        <input type="text" class="sns-account" data-sns-name="X" placeholder="@username / https://example.com" maxlength="200">
       </div>
-      <div class="sns-row" data-fixed="true">
+      <div class="sns-row" data-fixed="true" data-sns-id="sns-instagram">
         <span class="sns-name-fixed">Instagram</span>
-        <input type="text" class="sns-account" data-sns-name="Instagram" placeholder="@username" maxlength="30">
+        <input type="text" class="sns-account" data-sns-name="Instagram" placeholder="@username / https://example.com" maxlength="200">
+      </div>
+      <div class="sns-row" data-fixed="true" data-sns-id="sns-tiktok">
+        <span class="sns-name-fixed">TikTok</span>
+        <input type="text" class="sns-account" data-sns-name="TikTok" placeholder="@username / https://example.com" maxlength="200">
+      </div>
+      <div class="sns-row" data-fixed="true" data-sns-id="sns-youtube">
+        <span class="sns-name-fixed">YouTube</span>
+        <input type="text" class="sns-account" data-sns-name="YouTube" placeholder="@username / https://example.com" maxlength="200">
+      </div>
+      <div class="sns-row" data-fixed="true" data-sns-id="sns-facebook">
+        <span class="sns-name-fixed">Facebook</span>
+        <input type="text" class="sns-account" data-sns-name="Facebook" placeholder="@username / https://example.com" maxlength="200">
+      </div>
+      <div class="sns-row" data-fixed="true" data-sns-id="sns-hp">
+        <span class="sns-name-fixed">HP</span>
+        <input type="text" class="sns-account" data-sns-name="HP" placeholder="https://example.com" maxlength="200">
       </div>
     </div>
-    <button type="button" class="sns-add-btn" id="add-sns-btn">＋ その他SNSを追加</button>
+
+    <div class="sns-qr-picker">
+      <label for="f-qr-target">QR生成するSNS</label>
+      <select id="f-qr-target" class="sns-qr-select">
+        <option value="">選択しない</option>
+      </select>
+    </div>
   </div>
 
   <div class="section-label">PR</div>

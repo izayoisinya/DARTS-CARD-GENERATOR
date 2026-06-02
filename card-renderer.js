@@ -7,6 +7,7 @@ function buildCardHtml(formData, state) {
     name,
     ratingLive,
     ratingPho,
+    experience,
     area,
     home,
     gender,
@@ -19,6 +20,7 @@ function buildCardHtml(formData, state) {
     favoriteGame,
     goal,
     sns,
+    qrTarget,
     pr,
   } = formData;
 
@@ -75,6 +77,7 @@ function buildCardHtml(formData, state) {
 
   const areaRow = area ? wideCell('エリア', escHtml(area), 'gold') : '';
   const homeRow = home ? wideCell('ホーム', escHtml(home), 'gold') : '';
+  const experienceRow = experience ? wideCell('ダーツ歴', escHtml(experience), 'gold') : '';
 
   let settingRows = '';
   if (barrel) settingRows += wideCell('バレル', escHtml(barrel));
@@ -114,6 +117,16 @@ function buildCardHtml(formData, state) {
     });
   }
 
+  const qrSection = qrTarget
+    ? `
+      <div class="card-cell card-qr-cell">
+        <div class="c-label">QR</div>
+        <div class="card-qr-box" id="card-qr-box"></div>
+        <div class="card-qr-note">${escHtml(qrTarget.name)}: ${escHtml(qrTarget.account)}</div>
+      </div>
+    `
+    : '';
+
   const choices = [];
   const styleCell = choiceCell('普段は', styleLabel);
   if (styleCell) choices.push(styleCell);
@@ -133,6 +146,9 @@ function buildCardHtml(formData, state) {
     }
   }
 
+  const now = new Date();
+  const footerDate = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
+
   return `
     <div class="card-header">
       <div class="card-photo">${photoHTML}</div>
@@ -144,15 +160,17 @@ function buildCardHtml(formData, state) {
     <div class="card-body">
       ${areaRow}
       ${homeRow}
+      ${experienceRow}
       ${settingRows}
       ${gridRows}
       ${otherRows}
       ${snsRows}
+      ${qrSection}
       ${prSection}
     </div>
     <div class="card-footer">
       <span class="card-footer-tag">🎯 DARTS PROFILE CARD</span>
-      <span class="card-footer-tag">${new Date().getFullYear()}</span>
+      <span class="card-footer-tag">${footerDate}</span>
     </div>
   `;
 }

@@ -547,8 +547,8 @@ function getShareUrl() {
 function getShareText() {
   return [
     'ダーツプロフィールカードを作成しました！',
-    getShareUrl(),
-    '#DARTS_PROFILE_CARD',
+    '#ダーツ #ダーツ自己紹介カード',
+    '#ダーツ好きと繋がりたい #ダーツ友達募集 #投げ友募集',
   ].join('\n');
 }
 

@@ -55,6 +55,15 @@
   </div>
   <input type="file" id="photo-input" accept="image/*" style="display:none">
 
+  <div class="photo-position-wrap">
+    <label for="f-photo-scale">アイコン画像サイズ（トリミング）</label>
+    <input type="range" id="f-photo-scale" min="100" max="220" value="130" step="5">
+    <label for="f-photo-pos-x">アイコン表示位置（左右）</label>
+    <input type="range" id="f-photo-pos-x" min="0" max="100" value="50" step="1">
+    <label for="f-photo-pos-y">アイコン表示位置（上下）</label>
+    <input type="range" id="f-photo-pos-y" min="0" max="100" value="50" step="1">
+  </div>
+
   <div class="field">
     <label>エリア</label>
     <input type="text" id="f-area" placeholder="---" maxlength="20">
@@ -104,6 +113,27 @@
   <div class="field">
     <label>チップ</label>
     <input type="text" id="f-tip" placeholder="---" maxlength="20">
+  </div>
+
+  <div class="field my-darts-field">
+    <label>マイダーツ画像</label>
+    <div class="my-darts-upload" id="my-darts-upload">
+      <div class="upload-hint">
+        <span class="upload-icon">🎯</span>
+        <span class="upload-text">画像を選択</span>
+      </div>
+    </div>
+    <input type="file" id="my-darts-input" accept="image/*" style="display:none">
+    <div class="my-darts-scale-wrap">
+      <label for="f-my-darts-scale">画像サイズ（トリミング）</label>
+      <input type="range" id="f-my-darts-scale" min="100" max="220" value="130" step="5">
+    </div>
+    <div class="my-darts-position-wrap">
+      <label for="f-my-darts-pos-x">表示位置（左右）</label>
+      <input type="range" id="f-my-darts-pos-x" min="0" max="100" value="50" step="1">
+      <label for="f-my-darts-pos-y">表示位置（上下）</label>
+      <input type="range" id="f-my-darts-pos-y" min="0" max="100" value="50" step="1">
+    </div>
   </div>
 
   <div class="section-label">プレイスタイル</div>

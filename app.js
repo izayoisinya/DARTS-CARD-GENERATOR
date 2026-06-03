@@ -1,6 +1,19 @@
 // ===== STATE =====
+const CARD_DESIGN_WIDTH = 1280;
+const CARD_DESIGN_HEIGHT = 720;
+const EXPORT_WIDTH = 2560;
+const EXPORT_HEIGHT = 1440;
+const EXPORT_SCALE = EXPORT_WIDTH / CARD_DESIGN_WIDTH;
+
 const state = {
   photo: null,    // base64 or null
+  photoScale: 1.3,
+  photoPosX: 50,
+  photoPosY: 50,
+  myDartsPhoto: null,
+  myDartsScale: 1.3,
+  myDartsPosX: 50,
+  myDartsPosY: 50,
   gender: null,
   style: null,
   drink: null,
@@ -21,8 +34,25 @@ function initializeEventListeners() {
 
   const photoUpload = document.getElementById('photo-upload');
   const photoInput = document.getElementById('photo-input');
+  const photoScale = document.getElementById('f-photo-scale');
+  const photoPosX = document.getElementById('f-photo-pos-x');
+  const photoPosY = document.getElementById('f-photo-pos-y');
   photoUpload.addEventListener('click', triggerPhoto);
   photoInput.addEventListener('change', loadPhoto);
+  photoScale.addEventListener('input', updatePhotoScale);
+  photoPosX.addEventListener('input', updatePhotoPosition);
+  photoPosY.addEventListener('input', updatePhotoPosition);
+
+  const myDartsUpload = document.getElementById('my-darts-upload');
+  const myDartsInput = document.getElementById('my-darts-input');
+  const myDartsScale = document.getElementById('f-my-darts-scale');
+  const myDartsPosX = document.getElementById('f-my-darts-pos-x');
+  const myDartsPosY = document.getElementById('f-my-darts-pos-y');
+  myDartsUpload.addEventListener('click', triggerMyDartsPhoto);
+  myDartsInput.addEventListener('change', loadMyDartsPhoto);
+  myDartsScale.addEventListener('input', updateMyDartsScale);
+  myDartsPosX.addEventListener('input', updateMyDartsPosition);
+  myDartsPosY.addEventListener('input', updateMyDartsPosition);
 
   document.querySelectorAll('#f-rating-live, #f-rating-phoenix').forEach(input => {
     const config = ratingConfigs[input.id];
@@ -60,9 +90,8 @@ function syncCardPreviewScale() {
   const stage = document.getElementById('card-preview-stage');
   if (!stage) return;
 
-  const designWidth = 1280;
-  const stageWidth = stage.clientWidth || designWidth;
-  const scale = Math.min(1, stageWidth / designWidth);
+  const stageWidth = stage.clientWidth || CARD_DESIGN_WIDTH;
+  const scale = Math.min(1, stageWidth / CARD_DESIGN_WIDTH);
 
   stage.style.setProperty('--preview-scale', String(scale));
 }
@@ -277,10 +306,93 @@ function loadPhoto(e) {
     state.photo = ev.target.result;
     const el = document.getElementById('photo-upload');
     el.classList.add('has-photo');
-    el.innerHTML = `<img src="${state.photo}" alt="photo">`;
+    renderPhotoUploadPreview();
     syncPhotoSize();
   };
   reader.readAsDataURL(file);
+}
+
+function updatePhotoPosition() {
+  const posX = Number(document.getElementById('f-photo-pos-x').value || 50);
+  const posY = Number(document.getElementById('f-photo-pos-y').value || 50);
+  state.photoPosX = Math.max(0, Math.min(100, posX));
+  state.photoPosY = Math.max(0, Math.min(100, posY));
+  renderPhotoUploadPreview();
+}
+
+function updatePhotoScale() {
+  const raw = Number(document.getElementById('f-photo-scale').value || 130);
+  state.photoScale = Math.max(1, Math.min(2.2, raw / 100));
+  renderPhotoUploadPreview();
+}
+
+function renderPhotoUploadPreview() {
+  const el = document.getElementById('photo-upload');
+  if (!el || !state.photo) return;
+
+  const posX = Number.isFinite(state.photoPosX) ? state.photoPosX : 50;
+  const posY = Number.isFinite(state.photoPosY) ? state.photoPosY : 50;
+  const scale = Number.isFinite(state.photoScale) ? state.photoScale : 1.3;
+
+  el.innerHTML = `<img src="${state.photo}" alt="photo" style="--img-scale:${scale};--img-pos-x:${posX}%;--img-pos-y:${posY}%;">`;
+}
+
+function triggerMyDartsPhoto() {
+  document.getElementById('my-darts-input').click();
+}
+
+function loadMyDartsPhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const maxPhotoSize = 5 * 1024 * 1024;
+  const photoValidationError = getPhotoValidationError(file, maxPhotoSize);
+  if (photoValidationError) {
+    showToast(photoValidationError);
+    e.target.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = ev => {
+    state.myDartsPhoto = ev.target.result;
+    const el = document.getElementById('my-darts-upload');
+    el.classList.add('has-photo');
+    renderMyDartsUploadPreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateMyDartsScale(e) {
+  const raw = Number(e.target.value || 130);
+  state.myDartsScale = raw / 100;
+  renderMyDartsUploadPreview();
+}
+
+function updateMyDartsPosition() {
+  const posX = Number(document.getElementById('f-my-darts-pos-x').value || 50);
+  const posY = Number(document.getElementById('f-my-darts-pos-y').value || 50);
+  state.myDartsPosX = Math.max(0, Math.min(100, posX));
+  state.myDartsPosY = Math.max(0, Math.min(100, posY));
+  renderMyDartsUploadPreview();
+}
+
+function renderMyDartsUploadPreview() {
+  const el = document.getElementById('my-darts-upload');
+  if (!el) return;
+
+  if (!state.myDartsPhoto) {
+    el.classList.remove('has-photo');
+    return;
+  }
+
+  const scale = Number.isFinite(state.myDartsScale) ? state.myDartsScale : 1.3;
+  const posX = Number.isFinite(state.myDartsPosX) ? state.myDartsPosX : 50;
+  const posY = Number.isFinite(state.myDartsPosY) ? state.myDartsPosY : 50;
+  el.innerHTML = `
+    <img src="${state.myDartsPhoto}" alt="my darts" style="--img-scale:${scale};--img-pos-x:${posX}%;--img-pos-y:${posY}%;">
+    <div class="upload-hint"><span class="upload-text">タップで画像変更</span></div>
+  `;
 }
 
 function syncPhotoSize() {
@@ -352,6 +464,10 @@ function generateCard() {
     flight: document.getElementById('f-flight').value.trim(),
     shaft: document.getElementById('f-shaft').value.trim(),
     tip: document.getElementById('f-tip').value.trim(),
+    myDartsPhoto: state.myDartsPhoto,
+    myDartsScale: state.myDartsScale,
+    myDartsPosX: state.myDartsPosX,
+    myDartsPosY: state.myDartsPosY,
     favoritePro: document.getElementById('f-favorite-pro').value.trim(),
     goodNumber: document.getElementById('f-good-number').value.trim(),
     favoriteGame: document.getElementById('f-favorite-game').value.trim(),
@@ -372,6 +488,43 @@ function generateCard() {
   switchTab('preview');
 }
 
+function createExportCardNode() {
+  const source = document.getElementById('card-output');
+  if (!source) return null;
+
+  const host = document.createElement('div');
+  host.style.position = 'fixed';
+  host.style.left = '-100000px';
+  host.style.top = '0';
+  host.style.width = `${CARD_DESIGN_WIDTH}px`;
+  host.style.height = `${CARD_DESIGN_HEIGHT}px`;
+  host.style.pointerEvents = 'none';
+  host.style.opacity = '0';
+  host.style.overflow = 'hidden';
+
+  const clone = source.cloneNode(true);
+  clone.id = 'card-output-export';
+  host.appendChild(clone);
+  document.body.appendChild(host);
+
+  const sourceCanvases = source.querySelectorAll('canvas');
+  const cloneCanvases = clone.querySelectorAll('canvas');
+
+  cloneCanvases.forEach((canvas, index) => {
+    const sourceCanvas = sourceCanvases[index];
+    if (!sourceCanvas) return;
+
+    canvas.width = sourceCanvas.width;
+    canvas.height = sourceCanvas.height;
+    const context = canvas.getContext('2d');
+    if (context) {
+      context.drawImage(sourceCanvas, 0, 0);
+    }
+  });
+
+  return { host, clone };
+}
+
 // ===== SAVE =====
 async function saveCard() {
   if (!state.generated || !document.getElementById('card-output').children.length) {
@@ -383,14 +536,22 @@ async function saveCard() {
   btn.classList.add('loading');
   btn.innerHTML = '<span>⏳</span> 生成中…';
 
+  let exportHost = null;
+
   try {
-    const el = document.getElementById('card-output');
-    const sourceWidth = el.offsetWidth || 1;
-    const sourceHeight = el.offsetHeight || 1;
+    const exportNode = createExportCardNode();
+    if (!exportNode) {
+      throw new Error('Export node initialization failed');
+    }
+
+    exportHost = exportNode.host;
+    const el = exportNode.clone;
+    const sourceWidth = CARD_DESIGN_WIDTH;
+    const sourceHeight = CARD_DESIGN_HEIGHT;
 
     const canvas = await html2canvas(el, {
-      backgroundColor: '#12141a',
-      scale: 2,
+      backgroundColor: null,
+      scale: EXPORT_SCALE,
       width: sourceWidth,
       height: sourceHeight,
       useCORS: true,
@@ -399,7 +560,7 @@ async function saveCard() {
     });
 
     const link = document.createElement('a');
-    link.download = `darts-card-${Date.now()}.png`;
+    link.download = `darts-card-${EXPORT_WIDTH}x${EXPORT_HEIGHT}-${Date.now()}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
 
@@ -407,6 +568,10 @@ async function saveCard() {
   } catch(e) {
     showToast('❌ 保存に失敗しました');
     console.error(e);
+  } finally {
+    if (exportHost) {
+      exportHost.remove();
+    }
   }
 
   btn.classList.remove('loading');

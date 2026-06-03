@@ -89,38 +89,8 @@ function initializeEventListeners() {
   if (generateBtn) generateBtn.addEventListener('click', generateCard);
   if (saveBtn) saveBtn.addEventListener('click', saveCard);
 
-  const previewScreen = document.getElementById('preview-screen');
-  const previewCloseBtn = document.getElementById('preview-close-btn');
-
-  if (previewCloseBtn) {
-    previewCloseBtn.addEventListener('click', closePreviewModal);
-  }
-
-  if (previewScreen) {
-    previewScreen.addEventListener('click', (event) => {
-      if (event.target === previewScreen) {
-        closePreviewModal();
-      }
-    });
-  }
-
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && document.body.classList.contains('preview-modal-open')) {
-      closePreviewModal();
-    }
-  });
-
   refreshQrTargetOptions();
   syncCardPreviewScale();
-}
-
-function openPreviewModal() {
-  document.body.classList.add('preview-modal-open');
-  syncCardPreviewScale();
-}
-
-function closePreviewModal() {
-  document.body.classList.remove('preview-modal-open');
 }
 
 function syncCardPreviewScale() {
@@ -131,11 +101,6 @@ function syncCardPreviewScale() {
   const scale = Math.min(1, stageWidth / CARD_DESIGN_WIDTH);
 
   stage.style.setProperty('--preview-scale', String(scale));
-}
-
-function syncViewportModeClass() {
-  const isDesktopLayout = window.matchMedia('(min-width: 820px)').matches;
-  document.body.classList.toggle('desktop-layout', isDesktopLayout);
 }
 
 function shouldForceAtBySnsName(snsName) {
@@ -315,26 +280,14 @@ function switchTab(tab) {
     showToast('先にカードを生成してください');
     return;
   }
-
   document.querySelectorAll('.tab-btn').forEach((b,i) => {
     b.classList.toggle('active', (i===0 && tab==='form') || (i===1 && tab==='preview'));
   });
-
-  const formScreen = document.getElementById('form-screen');
-  const previewScreen = document.getElementById('preview-screen');
-
-  if (formScreen) {
-    formScreen.classList.add('active');
-  }
-
-  if (previewScreen) {
-    previewScreen.classList.remove('active');
-  }
+  document.getElementById('form-screen').classList.toggle('active', tab==='form');
+  document.getElementById('preview-screen').classList.toggle('active', tab==='preview');
 
   if (tab === 'preview') {
-    openPreviewModal();
-  } else {
-    closePreviewModal();
+    syncCardPreviewScale();
   }
 }
 
@@ -450,15 +403,6 @@ function renderMyDartsUploadPreview() {
 }
 
 function syncPhotoSize() {
-  if (document.body.classList.contains('desktop-layout')) {
-    const photoDesktop = document.getElementById('photo-upload');
-    if (photoDesktop) {
-      photoDesktop.style.width = '';
-      photoDesktop.style.height = '';
-    }
-    return;
-  }
-
   const right = document.querySelector('.photo-name-row .fields-right');
   const photo = document.getElementById('photo-upload');
   if (!right || !photo) return;
@@ -474,8 +418,7 @@ window.addEventListener('load', syncPhotoSize);
 window.addEventListener('resize', syncPhotoSize);
 window.addEventListener('load', syncCardPreviewScale);
 window.addEventListener('resize', syncCardPreviewScale);
-window.addEventListener('load', syncViewportModeClass);
-window.addEventListener('resize', syncViewportModeClass);
+
 
 function updateSaveButtonState() {
   const btn = document.getElementById('save-btn');
@@ -646,7 +589,6 @@ async function saveCard() {
 
 function bootstrap() {
   initializeEventListeners();
-  syncViewportModeClass();
   updateSaveButtonState();
 }
 

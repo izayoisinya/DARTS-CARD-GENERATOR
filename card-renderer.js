@@ -50,8 +50,18 @@ function buildCardHtml(formData, state) {
   const genderMark = gender === 'male' ? '♂' : gender === 'female' ? '♀' : '';
   const genderColor = gender === 'male' ? '#4d90fe' : gender === 'female' ? '#e8547a' : '';
   const nameHtml = `<div class="card-name-line">${genderMark ? `<span class="card-gender-mark" style="color:${genderColor}">${genderMark}</span>` : ''}<div class="card-name">${textOrPlaceholder(name)}</div></div>`;
-  const experienceBadge = `<span class="card-rating-badge card-rating-badge-history"><span class="card-rating-label">YEARS</span><span class="card-rating-val">${textOrPlaceholder(experience)}</span></span>`;
-  const metaHtml = `<div class="card-meta-row">${ratingBadges}${experienceBadge}</div>`;
+  const experienceText = `${textOrPlaceholder(experience)}年`;
+  const metaHtml = `
+    <div class="card-meta-stack">
+      <div class="card-meta-row">${ratingBadges}</div>
+      <div class="card-experience-row">
+        <span class="card-rating-badge card-rating-badge-history">
+          <span class="card-rating-label">YEAR</span>
+          <span class="card-rating-val">${experienceText}</span>
+        </span>
+      </div>
+    </div>
+  `;
 
   const styleLabel = state.style === 'solo' ? '1人で黙々' : state.style === 'group' ? '大人数でワイワイ' : EMPTY_TEXT;
   const drinkLabel = state.drink === 'yes' ? '飲む' : state.drink === 'no' ? '飲まない' : EMPTY_TEXT;

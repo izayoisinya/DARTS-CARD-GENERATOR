@@ -534,6 +534,44 @@ function createExportCardNode() {
   return { host, clone };
 }
 
+function canvasToBlob(canvas) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(blob => {
+      if (blob) {
+        resolve(blob);
+      } else {
+        reject(new Error('Canvas export failed'));
+      }
+    }, 'image/png');
+  });
+}
+
+async function shareOrDownloadPng(canvas, filename) {
+  const blob = await canvasToBlob(canvas);
+  const file = new File([blob], filename, { type: 'image/png' });
+
+  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+    await navigator.share({
+      files: [file],
+      title: 'DARTS PROFILE CARD',
+      text: 'ダーツプロフィールカード',
+    });
+    return 'shared';
+  }
+
+  const objectUrl = URL.createObjectURL(blob);
+  try {
+    const link = document.createElement('a');
+    link.download = filename;
+    link.href = objectUrl;
+    link.click();
+  } finally {
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+  }
+
+  return 'downloaded';
+}
+
 // ===== SAVE =====
 async function saveCard() {
   if (!state.generated || !document.getElementById('card-output').children.length) {
@@ -568,12 +606,9 @@ async function saveCard() {
       logging: false,
     });
 
-    const link = document.createElement('a');
-    link.download = `darts-card-${EXPORT_WIDTH}x${EXPORT_HEIGHT}-${Date.now()}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-
-    showToast('✅ 保存しました！');
+    const filename = `darts-card-${EXPORT_WIDTH}x${EXPORT_HEIGHT}-${Date.now()}.png`;
+    const result = await shareOrDownloadPng(canvas, filename);
+    showToast(result === 'shared' ? '✅ 共有シートを開きました' : '✅ 保存しました！');
   } catch(e) {
     showToast('❌ 保存に失敗しました');
     console.error(e);

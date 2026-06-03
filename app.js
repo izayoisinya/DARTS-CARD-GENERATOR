@@ -637,8 +637,13 @@ async function shareCardOnX() {
       return;
     }
 
-    const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
-    window.open(intentUrl, '_blank', 'noopener,noreferrer');
+    const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}&hashtags=${encodeURIComponent('DARTS_PROFILE_CARD')}`;
+    const isMobileLike = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+    if (isMobileLike) {
+      window.location.assign(intentUrl);
+    } else {
+      window.open(intentUrl, '_blank', 'noopener,noreferrer');
+    }
     showToast('✅ X投稿画面を開きました');
   } catch (e) {
     showToast('❌ 共有に失敗しました');

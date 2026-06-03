@@ -28,19 +28,22 @@
 
 <!-- ===== 入力画面 ===== -->
 <div id="form-screen" class="screen active">
+  <div class="preview-modal-card">
+    <button type="button" class="preview-close-btn" id="preview-close-btn" aria-label="プレビューを閉じる">×</button>
 
-  <div class="section-label">基本情報</div>
-
-  <!-- 写真＋名前・エリア -->
-  <div class="photo-name-row">
-    <div class="photo-upload" id="photo-upload">
+    <!-- 生成されるカード -->
+    <div id="card-preview-stage">
+      <div id="card-preview-scale">
+        <div id="card-output">
+          <!-- JS で描画 -->
+        </div>
       <div class="upload-hint">
         <span class="upload-icon">📷</span>
-        <span class="upload-text">写真を選択</span>
       </div>
-    </div>
-    <div class="fields-right">
-      <div class="field">
+    <button class="save-btn" id="save-btn">
+      <span>💾</span> PNG で保存する
+    </button>
+  </div>
         <label>カード名</label>
         <input type="text" id="f-name" placeholder="---" maxlength="20">
       </div>

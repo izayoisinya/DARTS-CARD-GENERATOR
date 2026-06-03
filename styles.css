@@ -568,7 +568,52 @@ html, body {
 
 /* ===== PREVIEW SCREEN ===== */
 #preview-screen {
-  padding: 16px 20px 40px;
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(2, 8, 6, 0.82);
+  backdrop-filter: blur(4px);
+}
+
+body.preview-modal-open #preview-screen {
+  display: flex;
+}
+
+.preview-modal-card {
+  width: min(100%, 1320px);
+  max-height: calc(100vh - 32px);
+  background: linear-gradient(180deg, rgba(11, 21, 18, 0.94), rgba(6, 13, 11, 0.96));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(46,231,168,0.18);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: auto;
+}
+
+.preview-close-btn {
+  align-self: flex-end;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-bright);
+  border-radius: 50%;
+  background: rgba(18, 33, 28, 0.9);
+  color: var(--muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.preview-close-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 #card-preview-stage {
@@ -1073,4 +1118,92 @@ html, body {
 .toast.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+/* ===== DESKTOP INPUT LAYOUT ===== */
+@media (min-width: 820px) {
+  html,
+  body {
+    max-width: none !important;
+  }
+
+  body {
+    width: calc(100vw - 48px);
+    max-width: 1280px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .app-header {
+    padding: 26px 0 0;
+  }
+
+  .tab-nav {
+    display: none;
+  }
+
+  body.desktop-layout #form-screen,
+  body.desktop-layout #form-screen.active,
+  #form-screen,
+  #form-screen.active,
+  .screen.active#form-screen {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px 14px;
+    padding: 14px 0 28px;
+  }
+
+  #form-screen > .field,
+  #form-screen > .section-label,
+  #form-screen > .photo-name-row,
+  #form-screen > .photo-position-wrap,
+  #form-screen > .my-darts-field {
+    min-width: 0;
+  }
+
+  #form-screen .section-label {
+    grid-column: 1 / -1;
+  }
+
+  #form-screen .photo-name-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #form-screen .photo-name-row .photo-upload {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1;
+  }
+
+  #form-screen .photo-name-row .fields-right .field {
+    min-height: 86px;
+  }
+
+  #form-screen .my-darts-upload {
+    width: 100%;
+  }
+
+  .gen-btn {
+    position: static;
+    transform: none;
+    width: 100%;
+    margin-top: 18px;
+  }
+
+  .gen-btn:active {
+    transform: scale(0.98);
+  }
+
+  .save-btn {
+    margin-top: 4px;
+  }
+
+  #preview-screen {
+    padding: 24px;
+  }
+
+  .preview-modal-card {
+    padding: 22px;
+  }
 }

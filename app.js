@@ -37,22 +37,22 @@ function initializeEventListeners() {
   const photoScale = document.getElementById('f-photo-scale');
   const photoPosX = document.getElementById('f-photo-pos-x');
   const photoPosY = document.getElementById('f-photo-pos-y');
-  photoUpload.addEventListener('click', triggerPhoto);
-  photoInput.addEventListener('change', loadPhoto);
-  photoScale.addEventListener('input', updatePhotoScale);
-  photoPosX.addEventListener('input', updatePhotoPosition);
-  photoPosY.addEventListener('input', updatePhotoPosition);
+  if (photoUpload) photoUpload.addEventListener('click', triggerPhoto);
+  if (photoInput) photoInput.addEventListener('change', loadPhoto);
+  if (photoScale) photoScale.addEventListener('input', updatePhotoScale);
+  if (photoPosX) photoPosX.addEventListener('input', updatePhotoPosition);
+  if (photoPosY) photoPosY.addEventListener('input', updatePhotoPosition);
 
   const myDartsUpload = document.getElementById('my-darts-upload');
   const myDartsInput = document.getElementById('my-darts-input');
   const myDartsScale = document.getElementById('f-my-darts-scale');
   const myDartsPosX = document.getElementById('f-my-darts-pos-x');
   const myDartsPosY = document.getElementById('f-my-darts-pos-y');
-  myDartsUpload.addEventListener('click', triggerMyDartsPhoto);
-  myDartsInput.addEventListener('change', loadMyDartsPhoto);
-  myDartsScale.addEventListener('input', updateMyDartsScale);
-  myDartsPosX.addEventListener('input', updateMyDartsPosition);
-  myDartsPosY.addEventListener('input', updateMyDartsPosition);
+  if (myDartsUpload) myDartsUpload.addEventListener('click', triggerMyDartsPhoto);
+  if (myDartsInput) myDartsInput.addEventListener('change', loadMyDartsPhoto);
+  if (myDartsScale) myDartsScale.addEventListener('input', updateMyDartsScale);
+  if (myDartsPosX) myDartsPosX.addEventListener('input', updateMyDartsPosition);
+  if (myDartsPosY) myDartsPosY.addEventListener('input', updateMyDartsPosition);
 
   document.querySelectorAll('#f-rating-live, #f-rating-phoenix').forEach(input => {
     const config = ratingConfigs[input.id];
@@ -68,22 +68,59 @@ function initializeEventListeners() {
   });
 
   const experienceInput = document.getElementById('f-experience');
-  experienceInput.addEventListener('input', () => {
-    experienceInput.value = experienceInput.value.replace(/[^0-9]/g, '');
-  });
+  if (experienceInput) {
+    experienceInput.addEventListener('input', () => {
+      experienceInput.value = experienceInput.value.replace(/[^0-9]/g, '');
+    });
+  }
 
   document.querySelectorAll('.toggle-btn[data-group]').forEach(btn => {
     btn.addEventListener('click', () => toggleSelect(btn));
   });
 
   document.querySelectorAll('.sns-account').forEach(bindSnsAccountInput);
-  document.getElementById('f-qr-target').addEventListener('change', refreshQrTargetOptions);
+  const qrTarget = document.getElementById('f-qr-target');
+  if (qrTarget) {
+    qrTarget.addEventListener('change', refreshQrTargetOptions);
+  }
 
-  document.getElementById('generate-btn').addEventListener('click', generateCard);
-  document.getElementById('save-btn').addEventListener('click', saveCard);
+  const generateBtn = document.getElementById('generate-btn');
+  const saveBtn = document.getElementById('save-btn');
+  if (generateBtn) generateBtn.addEventListener('click', generateCard);
+  if (saveBtn) saveBtn.addEventListener('click', saveCard);
+
+  const previewScreen = document.getElementById('preview-screen');
+  const previewCloseBtn = document.getElementById('preview-close-btn');
+
+  if (previewCloseBtn) {
+    previewCloseBtn.addEventListener('click', closePreviewModal);
+  }
+
+  if (previewScreen) {
+    previewScreen.addEventListener('click', (event) => {
+      if (event.target === previewScreen) {
+        closePreviewModal();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && document.body.classList.contains('preview-modal-open')) {
+      closePreviewModal();
+    }
+  });
 
   refreshQrTargetOptions();
   syncCardPreviewScale();
+}
+
+function openPreviewModal() {
+  document.body.classList.add('preview-modal-open');
+  syncCardPreviewScale();
+}
+
+function closePreviewModal() {
+  document.body.classList.remove('preview-modal-open');
 }
 
 function syncCardPreviewScale() {
@@ -94,6 +131,11 @@ function syncCardPreviewScale() {
   const scale = Math.min(1, stageWidth / CARD_DESIGN_WIDTH);
 
   stage.style.setProperty('--preview-scale', String(scale));
+}
+
+function syncViewportModeClass() {
+  const isDesktopLayout = window.matchMedia('(min-width: 820px)').matches;
+  document.body.classList.toggle('desktop-layout', isDesktopLayout);
 }
 
 function shouldForceAtBySnsName(snsName) {
@@ -273,14 +315,26 @@ function switchTab(tab) {
     showToast('先にカードを生成してください');
     return;
   }
+
   document.querySelectorAll('.tab-btn').forEach((b,i) => {
     b.classList.toggle('active', (i===0 && tab==='form') || (i===1 && tab==='preview'));
   });
-  document.getElementById('form-screen').classList.toggle('active', tab==='form');
-  document.getElementById('preview-screen').classList.toggle('active', tab==='preview');
+
+  const formScreen = document.getElementById('form-screen');
+  const previewScreen = document.getElementById('preview-screen');
+
+  if (formScreen) {
+    formScreen.classList.add('active');
+  }
+
+  if (previewScreen) {
+    previewScreen.classList.remove('active');
+  }
 
   if (tab === 'preview') {
-    syncCardPreviewScale();
+    openPreviewModal();
+  } else {
+    closePreviewModal();
   }
 }
 
@@ -396,6 +450,15 @@ function renderMyDartsUploadPreview() {
 }
 
 function syncPhotoSize() {
+  if (document.body.classList.contains('desktop-layout')) {
+    const photoDesktop = document.getElementById('photo-upload');
+    if (photoDesktop) {
+      photoDesktop.style.width = '';
+      photoDesktop.style.height = '';
+    }
+    return;
+  }
+
   const right = document.querySelector('.photo-name-row .fields-right');
   const photo = document.getElementById('photo-upload');
   if (!right || !photo) return;
@@ -411,9 +474,12 @@ window.addEventListener('load', syncPhotoSize);
 window.addEventListener('resize', syncPhotoSize);
 window.addEventListener('load', syncCardPreviewScale);
 window.addEventListener('resize', syncCardPreviewScale);
+window.addEventListener('load', syncViewportModeClass);
+window.addEventListener('resize', syncViewportModeClass);
 
 function updateSaveButtonState() {
   const btn = document.getElementById('save-btn');
+  if (!btn) return;
   btn.disabled = !state.generated;
 }
 
@@ -578,8 +644,17 @@ async function saveCard() {
   btn.innerHTML = '<span>💾</span> PNG で保存する';
 }
 
-initializeEventListeners();
-updateSaveButtonState();
+function bootstrap() {
+  initializeEventListeners();
+  syncViewportModeClass();
+  updateSaveButtonState();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrap);
+} else {
+  bootstrap();
+}
 
 // ===== TOAST =====
 function showToast(msg) {

@@ -86,8 +86,10 @@ function initializeEventListeners() {
 
   const generateBtn = document.getElementById('generate-btn');
   const saveBtn = document.getElementById('save-btn');
+  const xShareBtn = document.getElementById('x-share-btn');
   if (generateBtn) generateBtn.addEventListener('click', generateCard);
   if (saveBtn) saveBtn.addEventListener('click', saveCard);
+  if (xShareBtn) xShareBtn.addEventListener('click', shareCardOnX);
 
   refreshQrTargetOptions();
   syncCardPreviewScale();
@@ -421,9 +423,10 @@ window.addEventListener('resize', syncCardPreviewScale);
 
 
 function updateSaveButtonState() {
-  const btn = document.getElementById('save-btn');
-  if (!btn) return;
-  btn.disabled = !state.generated;
+  const saveBtn = document.getElementById('save-btn');
+  const xShareBtn = document.getElementById('x-share-btn');
+  if (saveBtn) saveBtn.disabled = !state.generated;
+  if (xShareBtn) xShareBtn.disabled = !state.generated;
 }
 
 // ===== TOGGLE =====
@@ -534,6 +537,21 @@ function createExportCardNode() {
   return { host, clone };
 }
 
+function getShareUrl() {
+  const url = new URL(window.location.href);
+  url.hash = '';
+  url.search = '';
+  return url.toString();
+}
+
+function getShareText() {
+  return [
+    'ダーツプロフィールカードを作成しました！',
+    getShareUrl(),
+    '#DARTS_PROFILE_CARD',
+  ].join('\n');
+}
+
 function canvasToBlob(canvas) {
   return new Promise((resolve, reject) => {
     canvas.toBlob(blob => {
@@ -570,6 +588,70 @@ async function shareOrDownloadPng(canvas, filename) {
   }
 
   return 'downloaded';
+}
+
+async function shareCardOnX() {
+  if (!state.generated || !document.getElementById('card-output').children.length) {
+    showToast('先にカードを生成してください');
+    return;
+  }
+
+  const btn = document.getElementById('x-share-btn');
+  if (btn) {
+    btn.classList.add('loading');
+    btn.disabled = true;
+  }
+
+  let exportHost = null;
+
+  try {
+    const exportNode = createExportCardNode();
+    if (!exportNode) {
+      throw new Error('Export node initialization failed');
+    }
+
+    exportHost = exportNode.host;
+    const canvas = await html2canvas(exportNode.clone, {
+      backgroundColor: '#040b09',
+      scale: EXPORT_SCALE,
+      width: CARD_DESIGN_WIDTH,
+      height: CARD_DESIGN_HEIGHT,
+      useCORS: true,
+      allowTaint: true,
+      logging: false,
+    });
+
+    const blob = await canvasToBlob(canvas);
+    const file = new File([blob], `darts-card-${EXPORT_WIDTH}x${EXPORT_HEIGHT}-${Date.now()}.png`, { type: 'image/png' });
+    const shareText = getShareText();
+    const shareUrl = getShareUrl();
+
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: 'DARTS PROFILE CARD',
+        text: shareText,
+        url: shareUrl,
+      });
+      showToast('✅ 共有シートを開きました');
+      return;
+    }
+
+    const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+    window.open(intentUrl, '_blank', 'noopener,noreferrer');
+    showToast('✅ X投稿画面を開きました');
+  } catch (e) {
+    showToast('❌ 共有に失敗しました');
+    console.error(e);
+  } finally {
+    if (exportHost) {
+      exportHost.remove();
+    }
+    if (btn) {
+      btn.classList.remove('loading');
+      btn.disabled = !state.generated;
+    }
+  }
 }
 
 // ===== SAVE =====

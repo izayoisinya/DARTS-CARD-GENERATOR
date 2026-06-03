@@ -623,6 +623,14 @@ html, body {
   text-shadow: 0 0 10px rgba(109, 255, 159, 0.72), 0 0 24px rgba(46, 214, 126, 0.45);
 }
 
+.card-header-date {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #6dff9f;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 8px rgba(109, 255, 159, 0.35);
+}
+
 .card-main-profile {
   grid-column: 1 / -1;
   display: grid;
@@ -832,7 +840,7 @@ html, body {
   flex-direction: column;
   gap: 8px;
   min-height: 0;
-  padding-bottom: 44px;
+  padding-bottom: 10px;
   overflow: hidden;
 }
 
@@ -902,7 +910,10 @@ html, body {
   border-radius: 6px;
   padding: 10px 10px;
   min-height: 44px;
+  height: 44px;
   box-shadow: none;
+  display: flex;
+  align-items: center;
 }
 
 .card-cell .c-label {
@@ -926,10 +937,14 @@ html, body {
   font-size: 12px;
   font-weight: 700;
   color: var(--teal);
-  word-break: break-all;
+  word-break: normal;
   line-height: 1.25;
-  display: inline;
-  overflow: visible;
+  display: inline-block;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-cell .c-val.gold { color: var(--gold); }
@@ -978,6 +993,9 @@ html, body {
   border-radius: 8px;
   padding: 8px 10px;
   box-shadow: none;
+  height: 246px;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-pr .c-label {
@@ -997,6 +1015,7 @@ html, body {
   font-weight: 500;
   color: var(--gold);
   line-height: 1.45;
+  flex: 1;
   white-space: pre-wrap;
   word-break: break-all;
   display: -webkit-box;

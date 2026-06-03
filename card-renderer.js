@@ -171,11 +171,12 @@ function buildCardHtml(formData, state) {
   }));
 
   const now = new Date();
-  const footerDate = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
+  const displayDate = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
 
   return `
     <div class="card-header">
       <div class="card-header-title">DARTS PROFILE CARD</div>
+      <span class="card-header-date">${displayDate}</span>
     </div>
     <div class="card-body">
       ${mainProfileSection}
@@ -193,10 +194,6 @@ function buildCardHtml(formData, state) {
           ${prSection}
         </div>
       </div>
-    </div>
-    <div class="card-footer">
-      <span class="card-footer-tag">🎯 DARTS PROFILE CARD</span>
-      <span class="card-footer-tag">${footerDate}</span>
     </div>
   `;
 }

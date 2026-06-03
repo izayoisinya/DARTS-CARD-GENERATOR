@@ -597,7 +597,7 @@ async function saveCard() {
     const sourceHeight = CARD_DESIGN_HEIGHT;
 
     const canvas = await html2canvas(el, {
-      backgroundColor: null,
+      backgroundColor: '#040b09',
       scale: EXPORT_SCALE,
       width: sourceWidth,
       height: sourceHeight,

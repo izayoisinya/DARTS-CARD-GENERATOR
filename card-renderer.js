@@ -159,7 +159,7 @@ function buildCardHtml(formData, state) {
   ]);
 
   const favoritesSection = sectionBlock('FAVORITES', [
-    wideCell('好きなプロ', textOrPlaceholder(favoritePro), '', 'card-cell-span-2'),
+    wideCell('好きなプロ/プレイヤー', textOrPlaceholder(favoritePro), '', 'card-cell-span-2'),
     wideCell('好きなゲーム', textOrPlaceholder(favoriteGame)),
     wideCell('得意ナンバー', textOrPlaceholder(goodNumber)),
     wideCell('目標', textOrPlaceholder(goal), '', 'card-cell-span-2'),

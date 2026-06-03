@@ -135,8 +135,6 @@ function buildCardHtml(formData, state) {
     { id: 'sns-instagram', name: 'Instagram' },
     { id: 'sns-tiktok', name: 'TikTok' },
     { id: 'sns-youtube', name: 'YouTube' },
-    { id: 'sns-facebook', name: 'Facebook' },
-    { id: 'sns-hp', name: 'HP' },
   ];
 
   const basicSection = sectionBlock('エリア/ホーム', [
@@ -165,7 +163,9 @@ function buildCardHtml(formData, state) {
     wideCell('目標', textOrPlaceholder(goal), '', 'card-cell-span-2'),
   ], 'card-section-favorites');
 
-  const snsSection = sectionBlock('SNS', fixedSnsItems.map(item => {
+  const visibleSnsItems = fixedSnsItems.filter(item => !qrTarget || item.id !== qrTarget.id);
+
+  const snsSection = sectionBlock('SNS', visibleSnsItems.map(item => {
     const snsItem = snsMap.get(item.id) || snsMap.get(item.name);
     return wideCell(item.name, textOrPlaceholder(snsItem ? snsItem.account : ''));
   }));

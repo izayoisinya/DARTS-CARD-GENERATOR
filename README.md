@@ -7,7 +7,7 @@
 - [x] 入力値の基本バリデーション（数値・画像サイズ）
 - [x] CDNスクリプトにSRI（integrity）を付与
 - [x] 最低限のCSPを設定
-- [x] favicon / webmanifest / apple-touch-icon を配置
+- [x] favicon（SVG/PNG）を配置
 - [ ] サーバー側ヘッダー設定（CSP, HSTS, X-Content-Type-Options, Permissions-Policy）
 - [ ] HTTPS本番ドメインでの実機検証（iOS/Android/PC）
 
@@ -22,9 +22,6 @@
 - `favicon.svg`
 - `favicon-32x32.png`
 - `favicon-16x16.png`
-- `apple-touch-icon.png` (180x180)
-- `icons/icon-192.png`
-- `icons/icon-512.png`
 
 ## ローカル実行
 

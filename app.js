@@ -546,9 +546,16 @@ function getShareUrl() {
 }
 
 function getShareText(shareUrl = '') {
+  const hashtagLines = [
+    '#ダーツ #ダーツ自己紹介カード',
+    '#ダーツ好きと繋がりたい #ダーツ友達募集',
+    '#投げ友募集 #DARTS_PROFILE_CARD',
+  ];
+
   const lines = [
     'ダーツプロフィールカードを作成しました！',
-    '#ダーツプロフィールカード #ダーツ #ダーツ自己紹介カード #ダーツ好きと繋がりたい #ダーツ友達募集 #投げ友募集',
+    '',
+    ...hashtagLines,
   ];
 
   if (shareUrl) {

@@ -683,6 +683,7 @@ html, body {
   align-items: center;
   gap: 6px;
   margin-bottom: 6px;
+  flex-wrap: wrap;
 }
 
 .card-gender-mark {
@@ -700,6 +701,19 @@ html, body {
   word-break: break-all;
 }
 
+.card-age-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 2px solid rgba(119, 167, 150, 0.85);
+  background: rgba(119, 167, 150, 0.16);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #6dff9f;
+  letter-spacing: 0.06em;
+}
+
 .card-meta-row {
   display: flex;
   gap: 6px;
@@ -715,6 +729,8 @@ html, body {
 .card-experience-row {
   display: flex;
   align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .card-main-darts {
@@ -789,6 +805,11 @@ html, body {
 .card-rating-badge-history {
   border-color: rgba(119, 167, 150, 0.9);
   background: rgba(119, 167, 150, 0.16);
+}
+
+.card-rating-badge-frequency {
+  border-color: rgba(103, 255, 159, 0.7);
+  background: rgba(103, 255, 159, 0.12);
 }
 
 .card-main-qr {

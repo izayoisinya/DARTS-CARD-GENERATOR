@@ -5,9 +5,11 @@ function escHtml(str) {
 function buildCardHtml(formData, state) {
   const {
     name,
+    age,
     ratingLive,
     ratingPho,
     experience,
+    throwFrequency,
     area,
     home,
     gender,
@@ -48,15 +50,21 @@ function buildCardHtml(formData, state) {
 
   const genderMark = gender === 'male' ? '♂' : gender === 'female' ? '♀' : '';
   const genderColor = gender === 'male' ? '#4d90fe' : gender === 'female' ? '#e8547a' : '';
-  const nameHtml = `<div class="card-name-line">${genderMark ? `<span class="card-gender-mark" style="color:${genderColor}">${genderMark}</span>` : ''}<div class="card-name">${textOrPlaceholder(name)}</div></div>`;
-  const experienceText = `${textOrPlaceholder(experience)}年`;
+  const ageText = age ? `${textOrPlaceholder(age)}歳` : EMPTY_TEXT;
+  const nameHtml = `<div class="card-name-line">${genderMark ? `<span class="card-gender-mark" style="color:${genderColor}">${genderMark}</span>` : ''}<div class="card-name">${textOrPlaceholder(name)}</div><span class="card-age-badge">${ageText}</span></div>`;
+  const experienceText = experience ? `${textOrPlaceholder(experience)}年` : EMPTY_TEXT;
+  const throwFrequencyText = textOrPlaceholder(throwFrequency);
   const metaHtml = `
     <div class="card-meta-stack">
       <div class="card-meta-row">${ratingBadges}</div>
       <div class="card-experience-row">
         <span class="card-rating-badge card-rating-badge-history">
-          <span class="card-rating-label">YEAR</span>
+          <span class="card-rating-label">ダーツ歴</span>
           <span class="card-rating-val">${experienceText}</span>
+        </span>
+        <span class="card-rating-badge card-rating-badge-frequency">
+          <span class="card-rating-label">投げる頻度</span>
+          <span class="card-rating-val">${throwFrequencyText}</span>
         </span>
       </div>
     </div>

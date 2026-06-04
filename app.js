@@ -74,6 +74,13 @@ function initializeEventListeners() {
     });
   }
 
+  const ageInput = document.getElementById('f-age');
+  if (ageInput) {
+    ageInput.addEventListener('input', () => {
+      ageInput.value = ageInput.value.replace(/[^0-9]/g, '');
+    });
+  }
+
   document.querySelectorAll('.toggle-btn[data-group]').forEach(btn => {
     btn.addEventListener('click', () => toggleSelect(btn));
   });
@@ -468,9 +475,11 @@ function generateCard() {
 
   const formData = {
     name: document.getElementById('f-name').value.trim(),
+    age: document.getElementById('f-age').value.trim(),
     ratingLive: liveInput.value.trim(),
     ratingPho: phoenixInput.value.trim(),
     experience: document.getElementById('f-experience').value.trim(),
+    throwFrequency: document.getElementById('f-throw-frequency').value.trim(),
     area: document.getElementById('f-area').value.trim(),
     home: document.getElementById('f-home').value.trim(),
     gender: state.gender,

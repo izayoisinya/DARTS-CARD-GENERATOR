@@ -1065,6 +1065,14 @@ html, body {
   margin-top: 16px;
 }
 
+.share-caution {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+
 .save-btn {
   width: 100%;
   padding: 16px;

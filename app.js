@@ -545,12 +545,17 @@ function getShareUrl() {
   return url.toString();
 }
 
-function getShareText() {
-  return [
+function getShareText(shareUrl = '') {
+  const lines = [
     'ダーツプロフィールカードを作成しました！',
-    '#ダーツ #ダーツ自己紹介カード',
-    '#ダーツ好きと繋がりたい #ダーツ友達募集 #投げ友募集',
-  ].join('\n');
+    '#ダーツプロフィールカード #ダーツ #ダーツ自己紹介カード #ダーツ好きと繋がりたい #ダーツ友達募集 #投げ友募集',
+  ];
+
+  if (shareUrl) {
+    lines.push('', shareUrl);
+  }
+
+  return lines.join('\n');
 }
 
 function canvasToBlob(canvas) {
@@ -604,10 +609,10 @@ async function shareCardOnX() {
   }
 
   try {
-    const shareText = getShareText();
     const shareUrl = getShareUrl();
-    const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}&hashtags=${encodeURIComponent('DARTS_PROFILE_CARD')}`;
-    const appMessage = [shareText, shareUrl].join('\n');
+    const shareText = getShareText(shareUrl);
+    const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+    const appMessage = shareText;
     const appDeepLink = `twitter://post?message=${encodeURIComponent(appMessage)}`;
     const isMobileLike = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
 

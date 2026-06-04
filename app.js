@@ -603,45 +603,32 @@ async function shareCardOnX() {
     btn.disabled = true;
   }
 
-  let exportHost = null;
-
   try {
-    const exportNode = createExportCardNode();
-    if (!exportNode) {
-      throw new Error('Export node initialization failed');
-    }
-
-    exportHost = exportNode.host;
-    const canvas = await html2canvas(exportNode.clone, {
-      backgroundColor: '#040b09',
-      scale: EXPORT_SCALE,
-      width: CARD_DESIGN_WIDTH,
-      height: CARD_DESIGN_HEIGHT,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
-    });
-
-    const blob = await canvasToBlob(canvas);
-    const file = new File([blob], `darts-card-${EXPORT_WIDTH}x${EXPORT_HEIGHT}-${Date.now()}.png`, { type: 'image/png' });
     const shareText = getShareText();
     const shareUrl = getShareUrl();
-
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({
-        files: [file],
-        title: 'DARTS PROFILE CARD',
-        text: shareText,
-        url: shareUrl,
-      });
-      showToast('✅ 共有シートを開きました');
-      return;
-    }
-
     const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}&hashtags=${encodeURIComponent('DARTS_PROFILE_CARD')}`;
+    const appMessage = [shareText, shareUrl].join('\n');
+    const appDeepLink = `twitter://post?message=${encodeURIComponent(appMessage)}`;
     const isMobileLike = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+
     if (isMobileLike) {
-      window.location.assign(intentUrl);
+      // Try opening the X app first. If unavailable, fall back to web compose.
+      let fallbackHandled = false;
+      const fallbackToWeb = () => {
+        if (fallbackHandled) return;
+        fallbackHandled = true;
+        window.location.assign(intentUrl);
+      };
+
+      const fallbackTimer = window.setTimeout(fallbackToWeb, 900);
+      const cancelFallbackOnHide = () => {
+        if (!document.hidden) return;
+        fallbackHandled = true;
+        window.clearTimeout(fallbackTimer);
+      };
+
+      document.addEventListener('visibilitychange', cancelFallbackOnHide, { once: true });
+      window.location.assign(appDeepLink);
     } else {
       window.open(intentUrl, '_blank', 'noopener,noreferrer');
     }
@@ -650,9 +637,6 @@ async function shareCardOnX() {
     showToast('❌ 共有に失敗しました');
     console.error(e);
   } finally {
-    if (exportHost) {
-      exportHost.remove();
-    }
     if (btn) {
       btn.classList.remove('loading');
       btn.disabled = !state.generated;

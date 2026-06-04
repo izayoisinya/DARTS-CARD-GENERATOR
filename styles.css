@@ -1019,10 +1019,10 @@ html, body {
 }
 
 .card-pr .c-val {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--gold);
-  line-height: 1.45;
+  line-height: 1.5;
   flex: 1;
   white-space: pre-wrap;
   word-break: break-all;

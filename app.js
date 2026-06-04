@@ -204,6 +204,8 @@ function refreshQrTargetOptions() {
 
   if (snsData.some(item => item.id === prevValue)) {
     select.value = prevValue;
+  } else if (snsData.some(item => item.id === 'sns-x')) {
+    select.value = 'sns-x';
   }
 }
 
@@ -483,7 +485,6 @@ function generateCard() {
     favoritePro: document.getElementById('f-favorite-pro').value.trim(),
     goodNumber: document.getElementById('f-good-number').value.trim(),
     favoriteGame: document.getElementById('f-favorite-game').value.trim(),
-    goal: document.getElementById('f-goal').value.trim(),
     sns: collectSnsData(),
     qrTarget: null,
     pr: document.getElementById('f-pr').value.trim(),

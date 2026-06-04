@@ -900,6 +900,14 @@ html, body {
   grid-template-columns: 1fr;
 }
 
+.card-section-sns .card-section-grid {
+  grid-template-columns: 1fr;
+}
+
+.card-section-favorites-single .card-section-grid {
+  grid-template-columns: 1fr;
+}
+
 .card-pr {
   min-height: 0;
 }

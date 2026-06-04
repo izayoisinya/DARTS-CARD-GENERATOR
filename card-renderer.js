@@ -22,7 +22,6 @@ function buildCardHtml(formData, state) {
     favoritePro,
     goodNumber,
     favoriteGame,
-    goal,
     sns,
     qrTarget,
     pr,
@@ -160,15 +159,14 @@ function buildCardHtml(formData, state) {
     wideCell('好きなプロ/プレイヤー', textOrPlaceholder(favoritePro), '', 'card-cell-span-2'),
     wideCell('好きなゲーム', textOrPlaceholder(favoriteGame)),
     wideCell('得意ナンバー', textOrPlaceholder(goodNumber)),
-    wideCell('目標', textOrPlaceholder(goal), '', 'card-cell-span-2'),
-  ], 'card-section-favorites');
+  ], 'card-section-favorites card-section-favorites-single');
 
   const visibleSnsItems = fixedSnsItems.filter(item => !qrTarget || item.id !== qrTarget.id);
 
   const snsSection = sectionBlock('SNS', visibleSnsItems.map(item => {
     const snsItem = snsMap.get(item.id) || snsMap.get(item.name);
     return wideCell(item.name, textOrPlaceholder(snsItem ? snsItem.account : ''));
-  }));
+  }), 'card-section-sns');
 
   const now = new Date();
   const displayDate = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`;
